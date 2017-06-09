@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<robot name="pioneer3at" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Chassis -->
+  <link name='base_link'>
+    <pose>0 0 0.1 0 0 0</pose>
+
+    <inertial>
+      <mass value="21.5"/>
+      <!-- P3AT 18.6kg plus three batteries @ 2.4kg each  minus four wheels @ 1.4 kg ea and top plate @ 0.1 kg-->
+      <origin xyz="0 -0.1 0.177"/>
+      <inertia ixx="0.3338" ixy="0.0" ixz="0.0" iyy="0.4783" iyz="0.0" izz="0.3338"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.177"/>
+      <geometry name="pioneer_geom">
+        <mesh filename="package://amr_robots_description/meshes/p3at_meshes/chassis.stl"/>
+      </geometry>
+      <material name="ChassisRed">
+        <color rgba="0.851 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision name="box_collision">
+      <origin rpy="0 0 0" xyz="0 0 0.177"/>
+      <geometry>
+        <mesh filename="package://amr_robots_description/meshes/p3at_meshes/chassis.stl"/>
+      </geometry>
+    </collision>
+
+
+  </link>
+  <gazebo reference="base_link">
+    <material value="Gazebo/Red"/>
+	<sensor name="contact_sensor" type="contact">
+		<contact>
+			<collision>box_collision</collision>
+			<topic>collision_indicator</topic>
+		</contact>
+
+		<plugin name="$____gazebo_ros_bumper_controller" filename="libgazebo_ros_bumper.so">
+			<alwaysOn>true</alwaysOn>
+			<bumperTopicName>collision_indicator</bumperTopicName>
+			<frameName>world</frameName>
+		</plugin>
+	</sensor>
+  </gazebo>
+</robot>
